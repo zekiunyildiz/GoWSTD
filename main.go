@@ -1,8 +1,11 @@
 package main
 
 import (
+	"log"
 	"time"
 
+	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
 	"github.com/thedevsaddam/renderer"
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -40,4 +43,17 @@ func init() {
 	checkErr(err)
 	sess.SetMode(mgo.Monotonic, true)
 	db = sess.DB(dbName)
+}
+
+func main() {
+	r := chi.NewRouter()
+	r.Use(middleware.Logger)
+	r.Get("/", homeHandler)
+	r.Mount("/todo", todoHandlers())
+}
+
+func checkErr(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
 }
